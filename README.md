@@ -1,4 +1,6 @@
 # KubeAware - A Kubernetes aware application
+[![GoDoc](https://godoc.org/github.com/BeameryHQ/kubeaware?status.svg)](https://godoc.org/github.com/BeameryHQ/kubeaware)
+[![Go Report Card](https://goreportcard.com/badge/github.com/BeameryHQ/kubeaware)](https://goreportcard.com/report/github.com/BeameryHQ/kubeaware)  
 In order help applications who have yet to make it in the fast lane of _kubernetes ready_,
 this application looks at bridging the gap.
 
