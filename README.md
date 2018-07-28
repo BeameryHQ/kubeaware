@@ -1,5 +1,5 @@
 # KubeAware - A Kubernetes aware application
-In order help applications who have yet to make it in the fast lane of _kubernetes ready_, 
+In order help applications who have yet to make it in the fast lane of _kubernetes ready_,
 this application looks at bridging the gap.
 
 This application is made aware of the kubernetes environment and can react as you define it.
@@ -12,10 +12,10 @@ requests to send config updates.
 The benefit of using KubeAware with applications that do not have this functionality in built is
 that it gives you the freedom of being language and platform agnostic.
 ## Example Deployment
-Yiou can use KubeAware to wrap the running of the application so that you can ensure your 
+You can use KubeAware to wrap the running of the application so that you can ensure your
 deployments always run with the most up to date settings.
 ```Dockerfile
-FROM moviestoreguy/kubeaware:0.0.1
+FROM BeameryHQ/kubeaware
 
 # Copy in application
 COPY . .
