@@ -15,5 +15,6 @@ func (p *Polymorph) Set(v interface{}) {
 
 // String needs to satisfy the expvar.Var string's conversion
 func (p Polymorph) String() string {
+	// Why do the hard work when someone else has already done it
 	return fmt.Sprintf("%v", p.val)
 }
