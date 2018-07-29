@@ -4,6 +4,8 @@ import "fmt"
 
 // Polymorph creates an object that satisfies the expvar.Var interface
 // with more flexibility of what is stored inside it.
+// The value stored inside should be a reference to value so that it can be
+// used without updating
 type Polymorph struct {
 	val interface{}
 }

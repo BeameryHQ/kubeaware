@@ -12,6 +12,9 @@ func init() {
 }
 
 type mod struct {
+	// Restarted keeps track of the number of times the process has been restarted
+	// by the process manager
+	restarted int `monitor:"process.restart_count"`
 }
 
 func New() types.Module {

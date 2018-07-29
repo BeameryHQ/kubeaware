@@ -3,7 +3,7 @@ package types
 // Module is a simple unit of defined functionality that is used within
 // kubeAware
 type Module interface {
-	Connect(cord Coordinator) error
+	// Connect(cord Coordinator) error
 
 	ExitWithCondition(cond Condition)
 

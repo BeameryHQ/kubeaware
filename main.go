@@ -1,6 +1,9 @@
 package main
 
+import "flag"
+
 func main() {
+	flag.Parse()
 	// Load the config for KubeAware
 
 	// Register Signal handlers

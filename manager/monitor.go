@@ -12,7 +12,7 @@ import (
 const structTag = "monitor"
 
 func exportVariables(m types.Module) error {
-	// obtian the variable using the reflection library
+	// Obtain the variable using the reflection library
 	// so that we can export these variables ready for monitoring
 	t := reflect.TypeOf(m)
 	if t.Kind() != reflect.Ptr {
@@ -21,11 +21,11 @@ func exportVariables(m types.Module) error {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		if tag, exist := field.Tag.Lookup(structTag); exist {
+			// May need to be smarter with embedded structs
 			var variable types.Polymorph
-			// Need to convert field to a pointer value so we can recieve updates once things
-			// change within that variable
-			// Need to ensure that the tag is valid json
-			variable.Set(field)
+			r := reflect.ValueOf(m)
+			t := reflect.Indirect(r).FieldByName(field.Name)
+			variable.Set(t)
 			expvar.Publish(tag, variable)
 		}
 	}
