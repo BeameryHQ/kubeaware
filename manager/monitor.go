@@ -11,6 +11,8 @@ import (
 // structTag will inspect variables that are contained
 const structTag = "monitor"
 
+// exportVariables should always recieve a pointer to a struct
+// so that the underlying code can export any non complex values to expvar
 func exportVariables(m interface{}) error {
 	// Obtain the variable using the reflection library
 	// so that we can export these variables ready for monitoring

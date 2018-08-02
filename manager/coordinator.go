@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/BeameryHQ/kubeaware/manager/process"
 	"github.com/BeameryHQ/kubeaware/types"
+	"github.com/MovieStoreGuy/artemis"
 )
 
 var (
@@ -24,6 +24,7 @@ type mon struct {
 // GetInstance returns the signalton that is used within the main program
 func GetInstance() types.Coordinator {
 	once.Do(func() {
+		artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Creating manager instance"})
 		kubeAware = &mon{}
 	})
 	return kubeAware
@@ -33,7 +34,6 @@ func (m *mon) Configure(path string) error {
 	// Once we have loaded the config as a byte buffer
 	// Then we are going to itterate over each loaded module and pass
 	// the buff as one of the args
-	m.loaded = append(m.loaded, process.New())
 	return nil
 }
 
@@ -57,7 +57,8 @@ func (m *mon) Start() error {
 	// Load all the modules ready for monitoring.
 	for _, mod := range m.loaded {
 		if err := exportVariables(mod); err != nil {
-			fmt.Println("recieved issue:", err)
+			artemis.GetInstance().Log(artemis.Entry{artemis.Fatal,
+				"Unable to load module due to: " + err.Error()})
 		}
 		go mod.Start()
 	}

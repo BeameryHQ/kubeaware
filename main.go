@@ -2,9 +2,15 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/BeameryHQ/kubeaware/manager"
+	"github.com/MovieStoreGuy/artemis"
 )
+
+func init() {
+	artemis.GetInstance().Set(artemis.Debug, os.Stdout)
+}
 
 func main() {
 	flag.Parse()
