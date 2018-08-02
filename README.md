@@ -6,7 +6,7 @@ this application looks at bridging the gap.
 
 This application is made aware of the kubernetes environment and can react as you define it.
 
-## Technically application
+## Technical application
 With Kubeaware, it can be used to fire events within other third party applications running.
 This could be used to sync deployments, enforce configmap updates across deplyoments, use HTTP
 requests to send config updates.
