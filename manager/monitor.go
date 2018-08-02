@@ -2,10 +2,10 @@ package manager
 
 import (
 	"expvar"
-	"fmt"
 	"reflect"
 
 	"github.com/BeameryHQ/kubeaware/types"
+	"github.com/MovieStoreGuy/artemis"
 )
 
 // structTag will inspect variables that are contained
@@ -22,16 +22,13 @@ func exportVariables(m interface{}) error {
 	for i := 0; i < abstract.NumField(); i++ {
 		switch abstract.Field(i).Kind() {
 		case reflect.Struct:
-			// inner structs doesn't work yet as its all magical
-			if err := exportVariables(abstract.Field(i).Addr()); err != nil {
-				return err
-			}
-			continue
+			// TODO(Sean Marciniak): Fix nested structs so that they can be evaluated
+			artemis.GetInstance().Log(artemis.Entry{artemis.Debug, "Nested structs are not currenttly supported"})
 		default:
 			if tag, exist := abstract.Type().Field(i).Tag.Lookup(structTag); exist {
 				var variable types.Polymorph
 				variable.Set(reflect.Indirect(reflect.ValueOf(m)).FieldByName(abstract.Type().Field(i).Name))
-				fmt.Println("Publishing tag", tag)
+				artemis.GetInstance().Log(artemis.Entry{artemis.Debug, "Now publishing: " + tag})
 				expvar.Publish(tag, variable)
 			}
 		}
