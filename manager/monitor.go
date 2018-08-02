@@ -23,7 +23,7 @@ func exportVariables(m interface{}) error {
 		switch abstract.Field(i).Kind() {
 		case reflect.Struct:
 			// TODO(Sean Marciniak): Fix nested structs so that they can be evaluated
-			artemis.GetInstance().Log(artemis.Entry{artemis.Debug, "Nested structs are not currenttly supported"})
+			artemis.GetInstance().Log(artemis.Entry{artemis.Debug, "Nested structs are not currently supported"})
 		default:
 			if tag, exist := abstract.Type().Field(i).Tag.Lookup(structTag); exist {
 				var variable types.Polymorph
