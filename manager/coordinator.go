@@ -1,9 +1,12 @@
 package manager
 
 import (
+	_ "expvar"
 	"fmt"
+	"net/http"
 	"sync"
 
+	"github.com/BeameryHQ/kubeaware/manager/process"
 	"github.com/BeameryHQ/kubeaware/types"
 )
 
@@ -14,6 +17,7 @@ var (
 
 type mon struct {
 	modules map[string]func() types.Module
+	loaded  []types.Module
 	mutex   sync.Mutex
 }
 
@@ -29,11 +33,12 @@ func (m *mon) Configure(path string) error {
 	// Once we have loaded the config as a byte buffer
 	// Then we are going to itterate over each loaded module and pass
 	// the buff as one of the args
+	m.loaded = append(m.loaded, process.New())
 	return nil
 }
 
 func (m *mon) LoadedModules() []types.Module {
-	return []types.Module{}
+	return m.loaded
 }
 
 func (m *mon) Register(name string, mod func() types.Module) error {
@@ -49,5 +54,11 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 }
 
 func (m *mon) Start() error {
-	return nil
+	// Load all the modules ready for monitoring.
+	for _, mod := range m.loaded {
+		exportVariables(mod)
+		go mod.Start()
+	}
+	// Start the modules
+	return http.ListenAndServe(":8000", nil)
 }

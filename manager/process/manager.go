@@ -1,20 +1,16 @@
 package process
 
 import (
-	"github.com/BeameryHQ/kubeaware/manager"
+	"time"
+
 	"github.com/BeameryHQ/kubeaware/types"
 )
-
-func init() {
-	if err := manager.GetInstance().Register("process", New); err != nil {
-		panic(err)
-	}
-}
 
 type mod struct {
 	// Restarted keeps track of the number of times the process has been restarted
 	// by the process manager
-	restarted int `monitor:"process.restart_count"`
+	restarted int           `monitor:"process.restart_count"`
+	uptime    time.Duration `monitor:"process.up_time"`
 }
 
 func New() types.Module {
@@ -30,5 +26,14 @@ func (m *mod) ParseConfig(info []byte) error {
 }
 
 func (m *mod) Start() error {
+	start := time.Now()
+	ticker := time.NewTicker(time.Second)
+	for {
+		select {
+		case <-ticker.C:
+			m.restarted++
+			m.uptime = time.Since(start)
+		}
+	}
 	return nil
 }
