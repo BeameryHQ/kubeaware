@@ -1,10 +1,11 @@
 package manager
 
 import (
-	_ "expvar"
 	"fmt"
-	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	"github.com/BeameryHQ/kubeaware/types"
 	"github.com/MovieStoreGuy/artemis"
@@ -46,6 +47,7 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 	// then a lock needs to be introduced.
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
+	artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Attempting to register new module:" + name})
 	if _, exist := m.modules[name]; exist {
 		return fmt.Errorf("The module |%v| already exists", name)
 	}
@@ -54,6 +56,7 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 }
 
 func (m *mon) Start() error {
+	fmt.Printf("Loaded Modules are: %+v\n", m.loaded)
 	// Load all the modules ready for monitoring.
 	for _, mod := range m.loaded {
 		if err := exportVariables(mod); err != nil {
@@ -62,6 +65,28 @@ func (m *mon) Start() error {
 		}
 		go mod.Start()
 	}
-	// Start the modules
-	return http.ListenAndServe(":8000", nil)
+	artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Now running all modules"})
+	return m.awaitSignals()
+}
+
+// awaitSignals will listen for predefined signals and will
+func (m *mon) awaitSignals() error {
+	artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Attaching signal handlers"})
+	done := make(chan error)
+	sigs := make(chan os.Signal, 1)
+	go func() {
+		event := <-sigs
+		artemis.GetInstance().Log(artemis.Entry{artemis.Info, "recieved event: " + event.String()})
+		for _, module := range m.loaded {
+			switch event {
+			case syscall.SIGINT:
+				module.ExitWithCondition(types.Shutdown)
+			case syscall.SIGABRT:
+				module.ExitWithCondition(types.ForceShutdown)
+			}
+		}
+		done <- nil
+	}()
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGABRT)
+	return <-done
 }

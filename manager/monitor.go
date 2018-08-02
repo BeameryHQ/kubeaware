@@ -18,7 +18,7 @@ func exportVariables(m interface{}) error {
 	// so that we can export these variables ready for monitoring
 	abstract := reflect.ValueOf(m)
 	if abstract.Kind() == reflect.Ptr {
-		// Need to access al the variables within the struct
+		// Need to access the variables within the struct
 		abstract = abstract.Elem()
 	}
 	for i := 0; i < abstract.NumField(); i++ {

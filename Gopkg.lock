@@ -7,9 +7,21 @@
   packages = ["."]
   revision = "340eff593e4e741a6030e02ef3dafbc8fdfea969"
 
+[[projects]]
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
+  version = "v1.1.1"
+
+[[projects]]
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  revision = "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
+  version = "v1.6.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "622f934a4b378ba449d45287c54c2d57655c19e486563ce2b4568a21861a5af9"
+  inputs-digest = "820c1b1a6235998f071c9ffeb8efdfe5d878a7685840e363219bc38ada0a0c97"
   solver-name = "gps-cdcl"
   solver-version = 1
