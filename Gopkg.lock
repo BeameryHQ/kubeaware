@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/MovieStoreGuy/artemis"
   packages = ["."]
-  revision = "ffce7d7bfdb116664a1aa3603923c1846dab880a"
+  revision = "340eff593e4e741a6030e02ef3dafbc8fdfea969"
 
 [solve-meta]
   analyzer-name = "dep"
