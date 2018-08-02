@@ -11,6 +11,11 @@ type mod struct {
 	// by the process manager
 	restarted int           `monitor:"process.restart_count"`
 	uptime    time.Duration `monitor:"process.up_time"`
+	process   inner         `monitor:"-"`
+}
+
+type inner struct {
+	metrics float32 `monitor:"process.inner.metrics"`
 }
 
 func New() types.Module {
@@ -33,6 +38,7 @@ func (m *mod) Start() error {
 		case <-ticker.C:
 			m.restarted++
 			m.uptime = time.Since(start)
+			m.process.metrics = 3.14
 		}
 	}
 	return nil

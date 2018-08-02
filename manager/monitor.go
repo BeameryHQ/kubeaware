@@ -1,8 +1,8 @@
 package manager
 
 import (
-	"errors"
 	"expvar"
+	"fmt"
 	"reflect"
 
 	"github.com/BeameryHQ/kubeaware/types"
@@ -11,23 +11,29 @@ import (
 // structTag will inspect variables that are contained
 const structTag = "monitor"
 
-func exportVariables(m types.Module) error {
+func exportVariables(m interface{}) error {
 	// Obtain the variable using the reflection library
 	// so that we can export these variables ready for monitoring
-	mirrortype := reflect.TypeOf(m)
-	if mirrortype.Kind() != reflect.Ptr && mirrortype.Elem().Kind() != reflect.Struct {
-		return errors.New("Unable monitor non pointer values")
+	abstract := reflect.ValueOf(m)
+	if abstract.Kind() == reflect.Ptr {
+		// Need to access al the variables within the struct
+		abstract = abstract.Elem()
 	}
-	mirrortype = mirrortype.Elem()
-	for i := 0; i < mirrortype.NumField(); i++ {
-		field := mirrortype.Field(i)
-		if tag, exist := field.Tag.Lookup(structTag); exist {
-			// May need to be smarter with embedded structs
-			var variable types.Polymorph
-			r := reflect.ValueOf(m)
-			t := reflect.Indirect(r).FieldByName(field.Name)
-			variable.Set(t)
-			expvar.Publish(tag, variable)
+	for i := 0; i < abstract.NumField(); i++ {
+		switch abstract.Field(i).Kind() {
+		case reflect.Struct:
+			// inner structs doesn't work yet as its all magical
+			if err := exportVariables(abstract.Field(i).Addr()); err != nil {
+				return err
+			}
+			continue
+		default:
+			if tag, exist := abstract.Type().Field(i).Tag.Lookup(structTag); exist {
+				var variable types.Polymorph
+				variable.Set(reflect.Indirect(reflect.ValueOf(m)).FieldByName(abstract.Type().Field(i).Name))
+				fmt.Println("Publishing tag", tag)
+				expvar.Publish(tag, variable)
+			}
 		}
 	}
 	return nil

@@ -56,7 +56,9 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 func (m *mon) Start() error {
 	// Load all the modules ready for monitoring.
 	for _, mod := range m.loaded {
-		exportVariables(mod)
+		if err := exportVariables(mod); err != nil {
+			fmt.Println("recieved issue:", err)
+		}
 		go mod.Start()
 	}
 	// Start the modules
