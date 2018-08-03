@@ -25,7 +25,7 @@ type mon struct {
 // GetInstance returns the signalton that is used within the main program
 func GetInstance() types.Coordinator {
 	once.Do(func() {
-		artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Creating manager instance"})
+		artemis.GetInstance().Log(artemis.InfoEntry("Creating manager instance"))
 		kubeAware = &mon{}
 	})
 	return kubeAware
@@ -47,7 +47,7 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 	// then a lock needs to be introduced.
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Attempting to register new module:" + name})
+	artemis.GetInstance().Log(artemis.InfoEntry("Attempting to register new module:", name))
 	if _, exist := m.modules[name]; exist {
 		return fmt.Errorf("The module |%v| already exists", name)
 	}
@@ -56,27 +56,25 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 }
 
 func (m *mon) Start() error {
-	fmt.Printf("Loaded Modules are: %+v\n", m.loaded)
 	// Load all the modules ready for monitoring.
 	for _, mod := range m.loaded {
 		if err := exportVariables(mod); err != nil {
-			artemis.GetInstance().Log(artemis.Entry{artemis.Fatal,
-				"Unable to load module due to: " + err.Error()})
+			artemis.GetInstance().Log(artemis.FatalEntry("Unable to load module due to: ", err))
 		}
 		go mod.Start()
 	}
-	artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Now running all modules"})
+	artemis.GetInstance().Log(artemis.InfoEntry("Now running all modules"))
 	return m.awaitSignals()
 }
 
 // awaitSignals will listen for predefined signals and will
 func (m *mon) awaitSignals() error {
-	artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Attaching signal handlers"})
+	artemis.GetInstance().Log(artemis.InfoEntry("Attaching signal handlers"))
 	done := make(chan error)
 	sigs := make(chan os.Signal, 1)
 	go func() {
 		event := <-sigs
-		artemis.GetInstance().Log(artemis.Entry{artemis.Info, "recieved event: " + event.String()})
+		artemis.GetInstance().Log(artemis.InfoEntry("recieved event: ", event))
 		for _, module := range m.loaded {
 			switch event {
 			case syscall.SIGINT:

@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/MovieStoreGuy/artemis"
   packages = ["."]
-  revision = "340eff593e4e741a6030e02ef3dafbc8fdfea969"
+  revision = "edbd0170f9bc45a3392c94c957a42352be8b7648"
 
 [[projects]]
   name = "github.com/gorilla/context"
