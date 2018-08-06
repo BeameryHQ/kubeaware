@@ -37,7 +37,7 @@ func (m *module) ExitWithCondition(cond types.Condition) {
 	switch cond {
 	case types.ForceShutdown, types.Shutdown:
 		if err := m.server.Close(); err != nil {
-			artemis.GetInstance().Log(artemis.Entry{artemis.Info, "Server failed to shutdown due to: " + err.Error()})
+			artemis.GetInstance().Log(artemis.FatalEntry("Server failed to shutdown due to: ", err))
 		}
 	}
 }
@@ -51,7 +51,15 @@ func (m *module) ParseConfig(buff []byte) error {
 
 func (m *module) Start() error {
 	m.enableDebugExport()
-	return m.server.ListenAndServe()
+	err := m.server.ListenAndServe()
+	switch err {
+	// Check to see if the error returned is an expected error due to a result of a signal
+	case http.ErrServerClosed:
+		err = nil
+	default:
+		// Do nothing as the error returned is an unexpected error
+	}
+	return err
 }
 
 func (m *module) enableDebugExport() {

@@ -17,11 +17,12 @@ var (
 )
 
 func init() {
-	artemis.GetInstance().Set(artemis.Info, os.Stdout)
+	artemis.GetInstance().Set(artemis.Debug, os.Stdout)
 	const (
 		blank = ""
 	)
 	flag.StringVar(&confPath, "configure", blank, "defines the path to load the config from (ENV: CONFIG_PATH)")
+	artemis.GetInstance().Log(artemis.DebugEntry("Finished processing init function"))
 }
 
 func main() {
