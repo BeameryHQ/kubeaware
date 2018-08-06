@@ -5,9 +5,11 @@ import (
 	"os"
 
 	"github.com/BeameryHQ/kubeaware/manager"
+	"github.com/MovieStoreGuy/artemis"
+
+	// Needed to register subprocesses of the coordinator
 	_ "github.com/BeameryHQ/kubeaware/manager/process"
 	_ "github.com/BeameryHQ/kubeaware/manager/server"
-	"github.com/MovieStoreGuy/artemis"
 )
 
 var (
