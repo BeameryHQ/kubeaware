@@ -9,9 +9,8 @@ import (
 )
 
 func init() {
-	artemis.GetInstance().Log(artemis.Entry{artemis.Debug, "Adding process function into manager"})
 	if err := manager.GetInstance().Register("process", New); err != nil {
-		artemis.GetInstance().Log(artemis.Entry{artemis.Fatal, "Unable to load process due to: " + err.Error()})
+		artemis.GetInstance().Log(artemis.FatalEntry("Unable to load process due to: ", err))
 	}
 }
 
