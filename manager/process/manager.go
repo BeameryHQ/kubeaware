@@ -42,7 +42,6 @@ func (m *mod) Start() error {
 		case <-ticker.C:
 			m.restarted++
 			m.uptime = time.Since(start)
-			m.process.metrics = 3.14
 		}
 	}
 	return nil

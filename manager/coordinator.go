@@ -26,7 +26,9 @@ type mon struct {
 func GetInstance() types.Coordinator {
 	once.Do(func() {
 		artemis.GetInstance().Log(artemis.InfoEntry("Creating manager instance"))
-		kubeAware = &mon{}
+		kubeAware = &mon{
+			modules: map[string](func() types.Module){},
+		}
 	})
 	return kubeAware
 }
@@ -47,7 +49,7 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 	// then a lock needs to be introduced.
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	artemis.GetInstance().Log(artemis.InfoEntry("Attempting to register new module:", name))
+	artemis.GetInstance().Log(artemis.InfoEntry("Attempting to register new module: ", name))
 	if _, exist := m.modules[name]; exist {
 		return fmt.Errorf("The module |%v| already exists", name)
 	}
@@ -57,6 +59,7 @@ func (m *mon) Register(name string, mod func() types.Module) error {
 
 func (m *mon) Start() error {
 	// Load all the modules ready for monitoring.
+	artemis.GetInstance().Log(artemis.InfoEntry("Currently loaded: ", len(m.modules)))
 	for _, mod := range m.loaded {
 		if err := exportVariables(mod); err != nil {
 			artemis.GetInstance().Log(artemis.FatalEntry("Unable to load module due to: ", err))

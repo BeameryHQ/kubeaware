@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/BeameryHQ/kubeaware/manager"
+	_ "github.com/BeameryHQ/kubeaware/manager/process"
+	_ "github.com/BeameryHQ/kubeaware/manager/server"
 	"github.com/MovieStoreGuy/artemis"
 )
 
@@ -26,10 +28,10 @@ func main() {
 	flag.Parse()
 	// Load the config for KubeAware
 	if err := manager.GetInstance().Configure(confPath); err != nil {
-		artemis.GetInstance().Log(artemis.Entry{artemis.Fatal, "Unable to configure instance due to:" + err.Error()})
+		artemis.GetInstance().Log(artemis.FatalEntry("Unable to configure instance due to: ", err))
 	}
 	// Determine which kubernetes types we need to watch in order to become "Aware"
 	if err := manager.GetInstance().Start(); err != nil {
-		artemis.GetInstance().Log(artemis.Entry{artemis.Fatal, "Unable to start instance due to:" + err.Error()})
+		artemis.GetInstance().Log(artemis.FatalEntry("Unable to start instance due to: ", err))
 	}
 }

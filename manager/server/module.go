@@ -18,7 +18,7 @@ type module struct {
 
 func init() {
 	if err := manager.GetInstance().Register("server", New); err != nil {
-		artemis.GetInstance().Log(artemis.Entry{artemis.Fatal, "Unable to register server"})
+		artemis.GetInstance().Log(artemis.FatalEntry("Unable to register server due to: ", err))
 	}
 }
 
