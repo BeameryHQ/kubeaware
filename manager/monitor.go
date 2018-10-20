@@ -25,6 +25,9 @@ func exportVariables(m interface{}) error {
 		case reflect.Slice, reflect.Ptr, reflect.Map:
 			// Do Nothing
 		case reflect.Struct:
+			if !abstract.Field(i).IsValid() || !abstract.Field(i).Addr().CanInterface() {
+				continue
+			}
 			if err := exportVariables(abstract.Field(i).Addr().Interface()); err != nil {
 				return err
 			}
